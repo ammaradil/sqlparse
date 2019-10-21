@@ -898,18 +898,18 @@ class Block(TokenList):
         return _flist
 
     def _get_all_functions(self, l):
-        fl = []
+        fl = set()
         _package = self.get_ancestor(Package)
         for su in l:
             if isinstance(su, Function):
                 if isinstance(su.parent, Identifier):
-                    fl.append(su.parent)
+                    fl.add(su.parent)
                 elif su.name in _package.fpn:
-                    fl.append(su)
+                    fl.add(su)
             elif isinstance(su, Identifier) and isinstance(su.parent, (If, For, Begin)):
-                fl.append(su)
-            fl += self._get_all_functions(su.get_sublists())
-        return list(set(fl))
+                fl.add(su)
+            fl.update(self._get_all_functions(su.get_sublists()))
+        return list(fl)
 
 
 class FunctionBlock(Block):
