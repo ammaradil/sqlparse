@@ -700,6 +700,14 @@ class Package(TokenList):
             n.append(efp.get_my_name())
         return n
 
+    @property
+    def is_body(self):
+        phidx, phtkn = self.token_next_by(i=PackageHeading)
+        bidx, btkn = phtkn.token_next_by(m=(T.Keyword, 'BODY'))
+        if btkn:
+            return True
+        return False
+
 
 class PackageHeading(TokenList):
     """ Procedure Heading Class """

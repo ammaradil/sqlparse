@@ -19,6 +19,18 @@ def is_keyword(value):
 
 SQL_REGEX = {
     'root': [
+        # ####### Custom pattern ######## #
+
+        (r'WHENEVER\s+SQLERROR\s+CONTINUE\s*;?', tokens.SqlError.Continue),
+        (r'DROP\s+PUBLIC\s+SYNONYM\s+[A-Z0-9]+\s*;?', tokens.Drop.Synonym),
+        (r'WHENEVER\s+SQLERROR\s+EXIT\s+ROLLBACK\s*;?', tokens.SqlError.Exit.Rollback),
+        (r'CREATE\s+PUBLIC\s+SYNONYM\s+[A-Z0-9]+\s+FOR\s+([A-Z0-9]+\.)?[A-Z0-9]+\s*;?', tokens.Create.Synonym),
+        (r'START\s+(GURGRTB|GURGRTH)\s+[A-Z0-9]+\s*;?', tokens.Start.Synonym),
+
+        (r'SET\s+((DEF(INE)?)|(SCAN))\s+(ON|OFF)(\s*;)?', tokens.Comment.Set),
+
+        ###################################
+
         (r'(--|# )\+.*?(\r\n|\r|\n|$)', tokens.Comment.Single.Hint),
         (r'/\*\+[\s\S]*?\*/', tokens.Comment.Multiline.Hint),
 

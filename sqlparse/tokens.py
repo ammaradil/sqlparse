@@ -73,3 +73,7 @@ CTE = Keyword.CTE
 Command = Keyword.Command
 
 ForIn = Keyword.ForIn
+SqlError = Token.SqlError
+Drop = Token.Drop
+Create = Token.Create
+Start = Token.Start
