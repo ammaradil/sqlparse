@@ -60,9 +60,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in build/qthelp, like this:"
-	@echo "# qcollectiongenerator build/qthelp/python-sqlparse.qhcp"
+	@echo "# qcollectiongenerator build/qthelp/python-bplsqlparse.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile build/qthelp/python-sqlparse.qhc"
+	@echo "# assistant -collectionFile build/qthelp/python-bplsqlparse.qhc"
 
 latex:
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) build/latex

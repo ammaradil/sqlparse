@@ -4,10 +4,10 @@ import types
 
 import pytest
 
-import sqlparse
-from sqlparse import lexer
-from sqlparse import sql, tokens as T
-from sqlparse.compat import StringIO
+import bplsqlparse
+from bplsqlparse import lexer
+from bplsqlparse import sql, tokens as T
+from bplsqlparse.compat import StringIO
 
 
 def test_tokenize_simple():
@@ -90,19 +90,19 @@ def test_token_flatten():
 
 
 def test_tokenlist_repr():
-    p = sqlparse.parse('foo, bar, baz')[0]
+    p = bplsqlparse.parse('foo, bar, baz')[0]
     tst = "<IdentifierList 'foo, b...' at 0x"
     assert repr(p.tokens[0])[:len(tst)] == tst
 
 
 def test_single_quotes():
-    p = sqlparse.parse("'test'")[0]
+    p = bplsqlparse.parse("'test'")[0]
     tst = "<Single \"'test'\" at 0x"
     assert repr(p.tokens[0])[:len(tst)] == tst
 
 
 def test_tokenlist_first():
-    p = sqlparse.parse(' select foo')[0]
+    p = bplsqlparse.parse(' select foo')[0]
     first = p.token_first()
     assert first.value == 'select'
     assert p.token_first(skip_ws=False).value == ' '
@@ -152,13 +152,13 @@ def test_stream_error():
     'INNER JOIN',
     'LEFT INNER JOIN'])
 def test_parse_join(expr):
-    p = sqlparse.parse('{0} foo'.format(expr))[0]
+    p = bplsqlparse.parse('{0} foo'.format(expr))[0]
     assert len(p.tokens) == 3
     assert p.tokens[0].ttype is T.Keyword
 
 
 def test_parse_union():  # issue294
-    p = sqlparse.parse('UNION ALL')[0]
+    p = bplsqlparse.parse('UNION ALL')[0]
     assert len(p.tokens) == 1
     assert p.tokens[0].ttype is T.Keyword
 
@@ -166,7 +166,7 @@ def test_parse_union():  # issue294
 @pytest.mark.parametrize('s', ['END IF', 'END   IF', 'END\t\nIF',
                                'END LOOP', 'END   LOOP', 'END\t\nLOOP'])
 def test_parse_endifloop(s):
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert len(p.tokens) == 1
     assert p.tokens[0].ttype is T.Keyword
 
@@ -178,7 +178,7 @@ def test_parse_endifloop(s):
     'v$name',  # issue291
 ])
 def test_parse_identifiers(s):
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert len(p.tokens) == 1
     token = p.tokens[0]
     assert str(token) == s

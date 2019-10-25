@@ -11,11 +11,11 @@ MANIFEST
 .cache/
 *.egg-info/
 htmlcov/
-extras/appengine/sqlparse
+extras/appengine/bplsqlparse
 extras/appengine/lib/
-extras/py3k/sqlparse
+extras/py3k/bplsqlparse
 extras/py3k/tests
-extras/py3k/sqlparse.diff
+extras/py3k/bplsqlparse.diff
 extras/py3k/tests.diff
 coverage.xml
 *.class

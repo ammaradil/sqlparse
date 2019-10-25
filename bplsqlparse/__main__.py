@@ -3,10 +3,10 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
-"""Entrypoint module for `python -m sqlparse`.
+"""Entrypoint module for `python -m bplsqlparse`.
 
 Why does this file exist, and why __main__? For more info, read:
 - https://www.python.org/dev/peps/pep-0338/
@@ -16,7 +16,7 @@ Why does this file exist, and why __main__? For more info, read:
 
 import sys
 
-from sqlparse.cli import main
+from bplsqlparse.cli import main
 
 if __name__ == '__main__':
     sys.exit(main())

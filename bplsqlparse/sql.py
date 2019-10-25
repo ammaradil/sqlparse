@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 """This module contains classes representing syntactical elements of SQL."""
@@ -10,9 +10,9 @@ from __future__ import print_function
 
 import re
 
-from sqlparse import tokens as T
-from sqlparse.compat import string_types, text_type, unicode_compatible
-from sqlparse.utils import imt, remove_quotes
+from bplsqlparse import tokens as T
+from bplsqlparse.compat import string_types, text_type, unicode_compatible
+from bplsqlparse.utils import imt, remove_quotes
 
 import inspect
 
@@ -531,7 +531,7 @@ class Identifier(TokenList):
 
 
 class IdentifierList(TokenList):
-    """A list of :class:`~sqlparse.sql.Identifier`\'s."""
+    """A list of :class:`~bplsqlparse.sql.Identifier`\'s."""
 
     def get_identifiers(self):
         """Returns the identifiers.
@@ -1087,10 +1087,10 @@ class Transaction(TokenList):
     #     while tok:
     #         if tok.value == "ROLLBACK":
     #             token.pop(tid)
-    #             updated_transaction = sqlparse.parse(cfg.replacer["ROLLBACK"])[0]
+    #             updated_transaction = bplsqlparse.parse(cfg.replacer["ROLLBACK"])[0]
     #         elif tok.value == "COMMIT":
     #             token.pop(tid)
-    #             updated_transaction = sqlparse.parse(cfg.replacer["COMMIT"])[0]
+    #             updated_transaction = bplsqlparse.parse(cfg.replacer["COMMIT"])[0]
     #         else:
     #             print("There is a 'ROLLBACK TO' in this file")
     #             tid, tok = Transaction.type_of_transaction(token, tid)

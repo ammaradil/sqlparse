@@ -2,14 +2,14 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 import itertools
 import re
 from collections import deque
 from contextlib import contextmanager
-from sqlparse.compat import text_type
+from bplsqlparse.compat import text_type
 
 # This regular expression replaces the home-cooked parser that was here before.
 # It is much faster, but requires an extra post-processing step to get the

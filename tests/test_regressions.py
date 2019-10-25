@@ -2,14 +2,14 @@
 
 import pytest
 
-import sqlparse
-from sqlparse import sql, tokens as T
-from sqlparse.compat import PY2
+import bplsqlparse
+from bplsqlparse import sql, tokens as T
+from bplsqlparse.compat import PY2
 
 
 def test_issue9():
     # make sure where doesn't consume parenthesis
-    p = sqlparse.parse('(where 1)')[0]
+    p = bplsqlparse.parse('(where 1)')[0]
     assert isinstance(p, sql.Statement)
     assert len(p.tokens) == 1
     assert isinstance(p.tokens[0], sql.Parenthesis)
@@ -20,7 +20,7 @@ def test_issue9():
 
 
 def test_issue13():
-    parsed = sqlparse.parse(("select 'one';\n"
+    parsed = bplsqlparse.parse(("select 'one';\n"
                              "select 'two\\'';\n"
                              "select 'three';"))
     assert len(parsed) == 3
@@ -31,20 +31,20 @@ def test_issue13():
                                '--', '--\n'])
 def test_issue26(s):
     # parse stand-alone comments
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert len(p.tokens) == 1
     assert p.tokens[0].ttype is T.Comment.Single
 
 
 @pytest.mark.parametrize('value', ['create', 'CREATE'])
 def test_issue34(value):
-    t = sqlparse.parse("create")[0].token_first()
+    t = bplsqlparse.parse("create")[0].token_first()
     assert t.match(T.Keyword.DDL, value) is True
 
 
 def test_issue35():
     # missing space before LIMIT. Updated for #321
-    sql = sqlparse.format("select * from foo where bar = 1 limit 1",
+    sql = bplsqlparse.format("select * from foo where bar = 1 limit 1",
                           reindent=True)
     assert sql == "\n".join([
         "select *",
@@ -54,14 +54,14 @@ def test_issue35():
 
 
 def test_issue38():
-    sql = sqlparse.format("SELECT foo; -- comment", strip_comments=True)
+    sql = bplsqlparse.format("SELECT foo; -- comment", strip_comments=True)
     assert sql == "SELECT foo;"
-    sql = sqlparse.format("/* foo */", strip_comments=True)
+    sql = bplsqlparse.format("/* foo */", strip_comments=True)
     assert sql == ""
 
 
 def test_issue39():
-    p = sqlparse.parse('select user.id from user')[0]
+    p = bplsqlparse.parse('select user.id from user')[0]
     assert len(p.tokens) == 7
     idt = p.tokens[2]
     assert idt.__class__ == sql.Identifier
@@ -73,7 +73,7 @@ def test_issue39():
 
 def test_issue40():
     # make sure identifier lists in subselects are grouped
-    p = sqlparse.parse(('SELECT id, name FROM '
+    p = bplsqlparse.parse(('SELECT id, name FROM '
                         '(SELECT id, name FROM bar) as foo'))[0]
     assert len(p.tokens) == 7
     assert p.tokens[2].__class__ == sql.IdentifierList
@@ -82,7 +82,7 @@ def test_issue40():
     sp = p.tokens[-1].tokens[0]
     assert sp.tokens[3].__class__ == sql.IdentifierList
     # make sure that formatting works as expected
-    s = sqlparse.format('SELECT id ==  name FROM '
+    s = bplsqlparse.format('SELECT id ==  name FROM '
                         '(SELECT id, name FROM bar)', reindent=True)
     assert s == '\n'.join([
         'SELECT id == name',
@@ -91,7 +91,7 @@ def test_issue40():
         '          name',
         '   FROM bar)'])
 
-    s = sqlparse.format('SELECT id ==  name FROM '
+    s = bplsqlparse.format('SELECT id ==  name FROM '
                         '(SELECT id, name FROM bar) as foo', reindent=True)
     assert s == '\n'.join([
         'SELECT id == name',
@@ -116,7 +116,7 @@ def test_issue40():
                                                ('get_typecast', 'text')])
 def test_issue78(s, func_name, result):
     # the bug author provided this nice examples, let's use them!
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     i = p.tokens[2]
     assert isinstance(i, sql.Identifier)
 
@@ -142,7 +142,7 @@ def test_issue83():
                 $_$;
 
                 ALTER TABLE..... ;"""
-    t = sqlparse.split(sql)
+    t = bplsqlparse.split(sql)
     assert len(t) == 3
 
 
@@ -150,16 +150,16 @@ def test_comment_encoding_when_reindent():
     # There was an UnicodeEncodeError in the reindent filter that
     # casted every comment followed by a keyword to str.
     sql = u'select foo -- Comment containing Ümläuts\nfrom bar'
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     assert formatted == sql
 
 
 def test_parse_sql_with_binary():
-    # See https://github.com/andialbrecht/sqlparse/pull/88
+    # See https://github.com/andialbrecht/bplsqlparse/pull/88
     # digest = '|ËêplL4¡høN{'
     digest = '\x82|\xcb\x0e\xea\x8aplL4\xa1h\x91\xf8N{'
     sql = "select * from foo where bar = '{0}'".format(digest)
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     tformatted = "select *\nfrom foo\nwhere bar = '{0}'".format(digest)
     if PY2:
         tformatted = tformatted.decode('unicode-escape')
@@ -170,7 +170,7 @@ def test_dont_alias_keywords():
     # The _group_left_right function had a bug where the check for the
     # left side wasn't handled correctly. In one case this resulted in
     # a keyword turning into an identifier.
-    p = sqlparse.parse('FROM AS foo')[0]
+    p = bplsqlparse.parse('FROM AS foo')[0]
     assert len(p.tokens) == 5
     assert p.tokens[0].ttype is T.Keyword
     assert p.tokens[2].ttype is T.Keyword
@@ -179,7 +179,7 @@ def test_dont_alias_keywords():
 def test_format_accepts_encoding(load_file):
     # issue20
     sql = load_file('test_cp1251.sql', 'cp1251')
-    formatted = sqlparse.format(sql, reindent=True, encoding='cp1251')
+    formatted = bplsqlparse.format(sql, reindent=True, encoding='cp1251')
     tformatted = u'insert into foo\nvalues (1); -- Песня про надежду'
 
     assert formatted == tformatted
@@ -187,7 +187,7 @@ def test_format_accepts_encoding(load_file):
 
 def test_stream(get_stream):
     stream = get_stream("stream.sql")
-    p = sqlparse.parse(stream)[0]
+    p = bplsqlparse.parse(stream)[0]
     assert p.get_type() == 'INSERT'
 
 
@@ -196,7 +196,7 @@ def test_issue90():
            ' "width" = NULL, "height" = NULL, "rating_votes" = 0,'
            ' "rating_score" = 0, "thumbnail_width" = NULL,'
            ' "thumbnail_height" = NULL, "price" = 1, "description" = NULL')
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     tformatted = '\n'.join([
         'UPDATE "gallery_photo"',
         'SET "owner_id" = 4018,',
@@ -214,7 +214,7 @@ def test_issue90():
 
 def test_except_formatting():
     sql = 'SELECT 1 FROM foo WHERE 2 = 3 EXCEPT SELECT 2 FROM bar WHERE 1 = 2'
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     tformatted = '\n'.join([
         'SELECT 1',
         'FROM foo',
@@ -228,7 +228,7 @@ def test_except_formatting():
 
 def test_null_with_as():
     sql = 'SELECT NULL AS c1, NULL AS c2 FROM t1'
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     tformatted = '\n'.join([
         'SELECT NULL AS c1,',
         '       NULL AS c2',
@@ -239,7 +239,7 @@ def test_null_with_as():
 def test_issue190_open_file(filepath):
     path = filepath('stream.sql')
     stream = open(path)
-    p = sqlparse.parse(stream)[0]
+    p = bplsqlparse.parse(stream)[0]
     assert p.get_type() == 'INSERT'
 
 
@@ -250,7 +250,7 @@ def test_issue193_splitting_function():
                  RETURN x;
                 END;
                 SELECT * FROM a.b;"""
-    splitted = sqlparse.split(sql)
+    splitted = bplsqlparse.split(sql)
     assert len(splitted) == 2
 
 
@@ -264,13 +264,13 @@ def test_issue194_splitting_function():
                  RETURN x;
                 END;
                 SELECT * FROM a.b;"""
-    splitted = sqlparse.split(sql)
+    splitted = bplsqlparse.split(sql)
     assert len(splitted) == 2
 
 
 def test_issue186_get_type():
     sql = "-- comment\ninsert into foo"
-    p = sqlparse.parse(sql)[0]
+    p = bplsqlparse.parse(sql)[0]
     assert p.get_type() == 'INSERT'
 
 
@@ -283,16 +283,16 @@ def test_issue212_py2unicode():
 
 def test_issue213_leadingws():
     sql = " select * from foo"
-    assert sqlparse.format(sql, strip_whitespace=True) == "select * from foo"
+    assert bplsqlparse.format(sql, strip_whitespace=True) == "select * from foo"
 
 
 def test_issue227_gettype_cte():
-    select_stmt = sqlparse.parse('SELECT 1, 2, 3 FROM foo;')
+    select_stmt = bplsqlparse.parse('SELECT 1, 2, 3 FROM foo;')
     assert select_stmt[0].get_type() == 'SELECT'
-    with_stmt = sqlparse.parse('WITH foo AS (SELECT 1, 2, 3)'
+    with_stmt = bplsqlparse.parse('WITH foo AS (SELECT 1, 2, 3)'
                                'SELECT * FROM foo;')
     assert with_stmt[0].get_type() == 'SELECT'
-    with2_stmt = sqlparse.parse("""
+    with2_stmt = bplsqlparse.parse("""
         WITH foo AS (SELECT 1 AS abc, 2 AS def),
              bar AS (SELECT * FROM something WHERE x > 1)
         INSERT INTO elsewhere SELECT * FROM foo JOIN bar;""")
@@ -301,7 +301,7 @@ def test_issue227_gettype_cte():
 
 def test_issue207_runaway_format():
     sql = 'select 1 from (select 1 as one, 2 as two, 3 from dual) t0'
-    p = sqlparse.format(sql, reindent=True)
+    p = bplsqlparse.format(sql, reindent=True)
     assert p == '\n'.join([
         "select 1",
         "from",
@@ -313,7 +313,7 @@ def test_issue207_runaway_format():
 
 def test_token_next_doesnt_ignore_skip_cm():
     sql = '--comment\nselect 1'
-    tok = sqlparse.parse(sql)[0].token_next(-1, skip_cm=True)[1]
+    tok = bplsqlparse.parse(sql)[0].token_next(-1, skip_cm=True)[1]
     assert tok.value == 'select'
 
 
@@ -322,7 +322,7 @@ def test_token_next_doesnt_ignore_skip_cm():
     'AS'
 ])
 def test_issue284_as_grouping(s):
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert s == str(p)
 
 
@@ -338,7 +338,7 @@ def test_issue315_utf8_by_default():
         '\xec\x82\xac\xeb\x9e\x91\xed\x95\xb4\xec\x9a\x94'
     )
     sql = "select * from foo where bar = '{0}'".format(digest)
-    formatted = sqlparse.format(sql, reindent=True)
+    formatted = bplsqlparse.format(sql, reindent=True)
     tformatted = "select *\nfrom foo\nwhere bar = '{0}'".format(digest)
     if PY2:
         tformatted = tformatted.decode('utf-8')
@@ -347,7 +347,7 @@ def test_issue315_utf8_by_default():
 
 def test_issue322_concurrently_is_keyword():
     s = 'CREATE INDEX CONCURRENTLY myindex ON mytable(col1);'
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
 
     assert len(p.tokens) == 12
     assert p.tokens[0].ttype is T.Keyword.DDL  # CREATE

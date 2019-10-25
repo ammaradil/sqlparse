@@ -52,7 +52,7 @@ Release 0.2.1 (Aug 13, 2016)
 Notable Changes
 
 * PostgreSQL: Function bodys are parsed as literal string. Previously
-  sqlparse assumed that all function bodys are parsable psql
+  bplsqlparse assumed that all function bodys are parsable psql
   strings (see issue277).
 
 Bug Fixes
@@ -68,16 +68,16 @@ Release 0.2.0 (Jul 20, 2016)
 ----------------------------
 
 IMPORTANT: The supported Python versions have changed with this release.
-sqlparse 0.2.x supports Python 2.7 and Python >= 3.3.
+bplsqlparse 0.2.x supports Python 2.7 and Python >= 3.3.
 
 Thanks to the many contributors for writing bug reports and working
 on pull requests who made this version possible!
 
 Internal Changes
 
-* sqlparse.SQLParseError was removed from top-level module and moved to
-  sqlparse.exceptions.
-* sqlparse.sql.Token.to_unicode was removed.
+* bplsqlparse.PLSQLParseError was removed from top-level module and moved to
+  bplsqlparse.exceptions.
+* bplsqlparse.sql.Token.to_unicode was removed.
 * The signature of a filter's process method has changed from
   process(stack, stream) -> to process(stream). Stack was never used at
   all.
@@ -260,7 +260,7 @@ Release 0.1.9 (Sep 28, 2013)
 
 Bug Fixes
 
-* Fix an regression introduced in 0.1.5 where sqlparse didn't properly
+* Fix an regression introduced in 0.1.5 where bplsqlparse didn't properly
   distinguished between single and double quoted strings when tagging
   identifier (issue111).
 
@@ -285,7 +285,7 @@ Enhancements
 * Add STRAIGHT_JOIN statement (by Yago Riveiro).
 * Function.get_parameters() now returns the parameter if only one parameter is
   given (issue94, by wayne.wuw).
-* sqlparse.split() now removes leading and trailing whitespaces from splitted
+* bplsqlparse.split() now removes leading and trailing whitespaces from splitted
   statements.
 * Add USE as keyword token (by mulos).
 * Improve parsing of PEP249-style placeholders (issue103).
@@ -322,9 +322,9 @@ Other
 Release 0.1.6 (Jan 01, 2013)
 ----------------------------
 
-sqlparse is now compatible with Python 3 without any patches. The
+bplsqlparse is now compatible with Python 3 without any patches. The
 Python 3 version is generated during install by 2to3. You'll need
-distribute to install sqlparse for Python 3.
+distribute to install bplsqlparse for Python 3.
 
 Bug Fixes
 
@@ -354,8 +354,8 @@ Bug Fixes
 
 Other
 
-* Deprecate sqlparse.SQLParseError. Please use
-  sqlparse.exceptions.SQLParseError instead.
+* Deprecate bplsqlparse.PLSQLParseError. Please use
+  bplsqlparse.exceptions.PLSQLParseError instead.
 * Add caching to speed up processing.
 * Add experimental filters for token processing.
 * Add sqlformat.parsestream (by quest).

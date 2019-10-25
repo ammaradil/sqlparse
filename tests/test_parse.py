@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
-"""Tests sqlparse.parse()."""
+"""Tests bplsqlparse.parse()."""
 
 import pytest
 
-import sqlparse
-from sqlparse import sql, tokens as T
-from sqlparse.compat import StringIO, text_type
+import bplsqlparse
+from bplsqlparse import sql, tokens as T
+from bplsqlparse.compat import StringIO, text_type
 
 
 def test_parse_tokenize():
     s = 'select * from foo;'
-    stmts = sqlparse.parse(s)
+    stmts = bplsqlparse.parse(s)
     assert len(stmts) == 1
     assert str(stmts[0]) == s
 
@@ -19,7 +19,7 @@ def test_parse_tokenize():
 def test_parse_multistatement():
     sql1 = 'select * from foo;'
     sql2 = 'select * from bar;'
-    stmts = sqlparse.parse(sql1 + sql2)
+    stmts = bplsqlparse.parse(sql1 + sql2)
     assert len(stmts) == 2
     assert str(stmts[0]) == sql1
     assert str(stmts[1]) == sql2
@@ -30,30 +30,30 @@ def test_parse_multistatement():
                                'select\r*from foo',
                                'select\r\n*from foo\n'])
 def test_parse_newlines(s):
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert str(p) == s
 
 
 def test_parse_within():
     s = 'foo(col1, col2)'
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     col1 = p.tokens[0].tokens[1].tokens[1].tokens[0]
     assert col1.within(sql.Function)
 
 
 def test_parse_child_of():
     s = '(col1, col2)'
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert p.tokens[0].tokens[1].is_child_of(p.tokens[0])
     s = 'select foo'
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert not p.tokens[2].is_child_of(p.tokens[0])
     assert p.tokens[2].is_child_of(p)
 
 
 def test_parse_has_ancestor():
     s = 'foo or (bar, baz)'
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     baz = p.tokens[-1].tokens[1].tokens[-1]
     assert baz.has_ancestor(p.tokens[-1].tokens[1])
     assert baz.has_ancestor(p.tokens[-1])
@@ -62,9 +62,9 @@ def test_parse_has_ancestor():
 
 @pytest.mark.parametrize('s', ['.5', '.51', '1.5', '12.5'])
 def test_parse_float(s):
-    t = sqlparse.parse(s)[0].tokens
+    t = bplsqlparse.parse(s)[0].tokens
     assert len(t) == 1
-    assert t[0].ttype is sqlparse.tokens.Number.Float
+    assert t[0].ttype is bplsqlparse.tokens.Number.Float
 
 
 @pytest.mark.parametrize('s, holder', [
@@ -74,19 +74,19 @@ def test_parse_float(s):
     ('select * from foo where user = %s', '%s'),
     ('select * from foo where user = $a', '$a')])
 def test_parse_placeholder(s, holder):
-    t = sqlparse.parse(s)[0].tokens[-1].tokens
-    assert t[-1].ttype is sqlparse.tokens.Name.Placeholder
+    t = bplsqlparse.parse(s)[0].tokens[-1].tokens
+    assert t[-1].ttype is bplsqlparse.tokens.Name.Placeholder
     assert t[-1].value == holder
 
 
 def test_parse_modulo_not_placeholder():
-    tokens = list(sqlparse.lexer.tokenize('x %3'))
-    assert tokens[2][0] == sqlparse.tokens.Operator
+    tokens = list(bplsqlparse.lexer.tokenize('x %3'))
+    assert tokens[2][0] == bplsqlparse.tokens.Operator
 
 
 def test_parse_access_symbol():
     # see issue27
-    t = sqlparse.parse('select a.[foo bar] as foo')[0].tokens
+    t = bplsqlparse.parse('select a.[foo bar] as foo')[0].tokens
     assert isinstance(t[-1], sql.Identifier)
     assert t[-1].get_name() == 'foo'
     assert t[-1].get_real_name() == '[foo bar]'
@@ -95,7 +95,7 @@ def test_parse_access_symbol():
 
 def test_parse_square_brackets_notation_isnt_too_greedy():
     # see issue153
-    t = sqlparse.parse('[foo], [bar]')[0].tokens
+    t = bplsqlparse.parse('[foo], [bar]')[0].tokens
     assert isinstance(t[0], sql.IdentifierList)
     assert len(t[0].tokens) == 4
     assert t[0].tokens[0].get_real_name() == '[foo]'
@@ -104,32 +104,32 @@ def test_parse_square_brackets_notation_isnt_too_greedy():
 
 def test_parse_keyword_like_identifier():
     # see issue47
-    t = sqlparse.parse('foo.key')[0].tokens
+    t = bplsqlparse.parse('foo.key')[0].tokens
     assert len(t) == 1
     assert isinstance(t[0], sql.Identifier)
 
 
 def test_parse_function_parameter():
     # see issue94
-    t = sqlparse.parse('abs(some_col)')[0].tokens[0].get_parameters()
+    t = bplsqlparse.parse('abs(some_col)')[0].tokens[0].get_parameters()
     assert len(t) == 1
     assert isinstance(t[0], sql.Identifier)
 
 
 def test_parse_function_param_single_literal():
-    t = sqlparse.parse('foo(5)')[0].tokens[0].get_parameters()
+    t = bplsqlparse.parse('foo(5)')[0].tokens[0].get_parameters()
     assert len(t) == 1
     assert t[0].ttype is T.Number.Integer
 
 
 def test_parse_nested_function():
-    t = sqlparse.parse('foo(bar(5))')[0].tokens[0].get_parameters()
+    t = bplsqlparse.parse('foo(bar(5))')[0].tokens[0].get_parameters()
     assert len(t) == 1
     assert type(t[0]) is sql.Function
 
 
 def test_quoted_identifier():
-    t = sqlparse.parse('select x.y as "z" from foo')[0].tokens
+    t = bplsqlparse.parse('select x.y as "z" from foo')[0].tokens
     assert isinstance(t[2], sql.Identifier)
     assert t[2].get_name() == 'z'
     assert t[2].get_real_name() == 'y'
@@ -138,7 +138,7 @@ def test_quoted_identifier():
 @pytest.mark.parametrize('name', ['foo', '_foo'])
 def test_valid_identifier_names(name):
     # issue175
-    t = sqlparse.parse(name)[0].tokens
+    t = bplsqlparse.parse(name)[0].tokens
     assert isinstance(t[0], sql.Identifier)
 
 
@@ -146,7 +146,7 @@ def test_psql_quotation_marks():
     # issue83
 
     # regression: make sure plain $$ work
-    t = sqlparse.split("""
+    t = bplsqlparse.split("""
     CREATE OR REPLACE FUNCTION testfunc1(integer) RETURNS integer AS $$
           ....
     $$ LANGUAGE plpgsql;
@@ -156,7 +156,7 @@ def test_psql_quotation_marks():
     assert len(t) == 2
 
     # make sure $SOMETHING$ works too
-    t = sqlparse.split("""
+    t = bplsqlparse.split("""
     CREATE OR REPLACE FUNCTION testfunc1(integer) RETURNS integer AS $PROC_1$
           ....
     $PROC_1$ LANGUAGE plpgsql;
@@ -168,60 +168,60 @@ def test_psql_quotation_marks():
 
 def test_double_precision_is_builtin():
     s = 'DOUBLE PRECISION'
-    t = sqlparse.parse(s)[0].tokens
+    t = bplsqlparse.parse(s)[0].tokens
     assert len(t) == 1
-    assert t[0].ttype == sqlparse.tokens.Name.Builtin
+    assert t[0].ttype == bplsqlparse.tokens.Name.Builtin
     assert t[0].value == 'DOUBLE PRECISION'
 
 
 @pytest.mark.parametrize('ph', ['?', ':1', ':foo', '%s', '%(foo)s'])
 def test_placeholder(ph):
-    p = sqlparse.parse(ph)[0].tokens
+    p = bplsqlparse.parse(ph)[0].tokens
     assert len(p) == 1
     assert p[0].ttype is T.Name.Placeholder
 
 
 @pytest.mark.parametrize('num', ['6.67428E-8', '1.988e33', '1e-12'])
 def test_scientific_numbers(num):
-    p = sqlparse.parse(num)[0].tokens
+    p = bplsqlparse.parse(num)[0].tokens
     assert len(p) == 1
     assert p[0].ttype is T.Number.Float
 
 
 def test_single_quotes_are_strings():
-    p = sqlparse.parse("'foo'")[0].tokens
+    p = bplsqlparse.parse("'foo'")[0].tokens
     assert len(p) == 1
     assert p[0].ttype is T.String.Single
 
 
 def test_double_quotes_are_identifiers():
-    p = sqlparse.parse('"foo"')[0].tokens
+    p = bplsqlparse.parse('"foo"')[0].tokens
     assert len(p) == 1
     assert isinstance(p[0], sql.Identifier)
 
 
 def test_single_quotes_with_linebreaks():
     # issue118
-    p = sqlparse.parse("'f\nf'")[0].tokens
+    p = bplsqlparse.parse("'f\nf'")[0].tokens
     assert len(p) == 1
     assert p[0].ttype is T.String.Single
 
 
 def test_sqlite_identifiers():
     # Make sure we still parse sqlite style escapes
-    p = sqlparse.parse('[col1],[col2]')[0].tokens
+    p = bplsqlparse.parse('[col1],[col2]')[0].tokens
     id_names = [id_.get_name() for id_ in p[0].get_identifiers()]
     assert len(p) == 1
     assert isinstance(p[0], sql.IdentifierList)
     assert id_names == ['[col1]', '[col2]']
 
-    p = sqlparse.parse('[col1]+[col2]')[0]
+    p = bplsqlparse.parse('[col1]+[col2]')[0]
     types = [tok.ttype for tok in p.flatten()]
     assert types == [T.Name, T.Operator, T.Name]
 
 
 def test_simple_1d_array_index():
-    p = sqlparse.parse('col[1]')[0].tokens
+    p = bplsqlparse.parse('col[1]')[0].tokens
     assert len(p) == 1
     assert p[0].get_name() == 'col'
     indices = list(p[0].get_array_indices())
@@ -231,20 +231,20 @@ def test_simple_1d_array_index():
 
 
 def test_2d_array_index():
-    p = sqlparse.parse('col[x][(y+1)*2]')[0].tokens
+    p = bplsqlparse.parse('col[x][(y+1)*2]')[0].tokens
     assert len(p) == 1
     assert p[0].get_name() == 'col'
     assert len(list(p[0].get_array_indices())) == 2  # 2-dimensional index
 
 
 def test_array_index_function_result():
-    p = sqlparse.parse('somefunc()[1]')[0].tokens
+    p = bplsqlparse.parse('somefunc()[1]')[0].tokens
     assert len(p) == 1
     assert len(list(p[0].get_array_indices())) == 1
 
 
 def test_schema_qualified_array_index():
-    p = sqlparse.parse('schem.col[1]')[0].tokens
+    p = bplsqlparse.parse('schem.col[1]')[0].tokens
     assert len(p) == 1
     assert p[0].get_parent_name() == 'schem'
     assert p[0].get_name() == 'col'
@@ -252,7 +252,7 @@ def test_schema_qualified_array_index():
 
 
 def test_aliased_array_index():
-    p = sqlparse.parse('col[1] x')[0].tokens
+    p = bplsqlparse.parse('col[1] x')[0].tokens
     assert len(p) == 1
     assert p[0].get_alias() == 'x'
     assert p[0].get_real_name() == 'col'
@@ -261,7 +261,7 @@ def test_aliased_array_index():
 
 def test_array_literal():
     # See issue #176
-    p = sqlparse.parse('ARRAY[%s, %s]')[0]
+    p = bplsqlparse.parse('ARRAY[%s, %s]')[0]
     assert len(p.tokens) == 2
     assert len(list(p.flatten())) == 7
 
@@ -269,7 +269,7 @@ def test_array_literal():
 def test_typed_array_definition():
     # array indices aren't grouped with builtins, but make sure we can extract
     # indentifer names
-    p = sqlparse.parse('x int, y int[], z int')[0]
+    p = bplsqlparse.parse('x int, y int[], z int')[0]
     names = [x.get_name() for x in p.get_sublists()
              if isinstance(x, sql.Identifier)]
     assert names == ['x', 'y', 'z']
@@ -278,7 +278,7 @@ def test_typed_array_definition():
 @pytest.mark.parametrize('s', ['select 1 -- foo', 'select 1 # foo'])
 def test_single_line_comments(s):
     # see issue178
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert len(p.tokens) == 5
     assert p.tokens[-1].ttype == T.Comment.Single
 
@@ -286,13 +286,13 @@ def test_single_line_comments(s):
 @pytest.mark.parametrize('s', ['foo', '@foo', '#foo', '##foo'])
 def test_names_and_special_names(s):
     # see issue192
-    p = sqlparse.parse(s)[0]
+    p = bplsqlparse.parse(s)[0]
     assert len(p.tokens) == 1
     assert isinstance(p.tokens[0], sql.Identifier)
 
 
 def test_get_token_at_offset():
-    p = sqlparse.parse('select * from dual')[0]
+    p = bplsqlparse.parse('select * from dual')[0]
     #                   0123456789
     assert p.get_token_at_offset(0) == p.tokens[0]
     assert p.get_token_at_offset(1) == p.tokens[0]
@@ -304,7 +304,7 @@ def test_get_token_at_offset():
 
 
 def test_pprint():
-    p = sqlparse.parse('select a0, b0, c0, d0, e0 from '
+    p = bplsqlparse.parse('select a0, b0, c0, d0, e0 from '
                        '(select * from dual) q0 where 1=1 and 2=2')[0]
     output = StringIO()
 
@@ -368,20 +368,20 @@ def test_pprint():
 
 
 def test_wildcard_multiplication():
-    p = sqlparse.parse('select * from dual')[0]
+    p = bplsqlparse.parse('select * from dual')[0]
     assert p.tokens[2].ttype == T.Wildcard
 
-    p = sqlparse.parse('select a0.* from dual a0')[0]
+    p = bplsqlparse.parse('select a0.* from dual a0')[0]
     assert p.tokens[2][2].ttype == T.Wildcard
 
-    p = sqlparse.parse('select 1 * 2 from dual')[0]
+    p = bplsqlparse.parse('select 1 * 2 from dual')[0]
     assert p.tokens[2][2].ttype == T.Operator
 
 
 def test_stmt_tokens_parents():
     # see issue 226
     s = "CREATE TABLE test();"
-    stmt = sqlparse.parse(s)[0]
+    stmt = bplsqlparse.parse(s)[0]
     for token in stmt.tokens:
         assert token.has_ancestor(stmt)
 
@@ -396,7 +396,7 @@ def test_stmt_tokens_parents():
 ])
 def test_dbldollar_as_literal(sql, is_literal):
     # see issue 277
-    p = sqlparse.parse(sql)[0]
+    p = bplsqlparse.parse(sql)[0]
     if is_literal:
         assert len(p.tokens) == 1
         assert p.tokens[0].ttype == T.Literal
@@ -409,14 +409,14 @@ def test_non_ascii():
     _test_non_ascii = u"insert into test (id, name) values (1, 'тест');"
 
     s = _test_non_ascii
-    stmts = sqlparse.parse(s)
+    stmts = bplsqlparse.parse(s)
     assert len(stmts) == 1
     statement = stmts[0]
     assert text_type(statement) == s
     assert statement._pprint_tree() is None
 
     s = _test_non_ascii.encode('utf-8')
-    stmts = sqlparse.parse(s, 'utf-8')
+    stmts = bplsqlparse.parse(s, 'utf-8')
     assert len(stmts) == 1
     statement = stmts[0]
     assert text_type(statement) == _test_non_ascii

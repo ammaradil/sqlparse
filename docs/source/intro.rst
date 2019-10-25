@@ -6,37 +6,37 @@ Download & Installation
 -----------------------
 
 The latest released version can be obtained from the `Python Package
-Index (PyPI) <http://pypi.python.org/pypi/sqlparse/>`_. To extract the
+Index (PyPI) <http://pypi.python.org/pypi/bplsqlparse/>`_. To extract the
 install the module system-wide run
 
 .. code-block:: bash
 
-   $ tar cvfz python-sqlparse-VERSION.tar.gz
-   $ cd python-sqlparse/
+   $ tar cvfz python-bplsqlparse-VERSION.tar.gz
+   $ cd python-bplsqlparse/
    $ sudo python setup.py install
 
-Alternatively you can install :mod:`sqlparse` using :command:`pip`:
+Alternatively you can install :mod:`bplsqlparse` using :command:`pip`:
 
 .. code-block:: bash
 
-   $ pip install sqlparse
+   $ pip install bplsqlparse
 
 
 Getting Started
 ---------------
 
-The :mod:`sqlparse` module provides three simple functions on module level
+The :mod:`bplsqlparse` module provides three simple functions on module level
 to achieve some common tasks when working with SQL statements.
 This section shows some simple usage examples of these functions.
 
 Let's get started with splitting a string containing one or more SQL
-statements into a list of single statements using :meth:`~sqlparse.split`:
+statements into a list of single statements using :meth:`~bplsqlparse.split`:
 
 .. code-block:: python
 
-  >>> import sqlparse
+  >>> import bplsqlparse
   >>> sql = 'select * from foo; select * from bar;'
-  >>> sqlparse.split(sql)
+  >>> bplsqlparse.split(sql)
   [u'select * from foo; ', u'select * from bar;']
 
 The end of a statement is identified by the occurrence of a semicolon.
@@ -48,7 +48,7 @@ SQL statements can be beautified by using the :meth:`~sqlarse.format` function.
 .. code-block:: python
 
   >>> sql = 'select * from foo where id in (select id from bar);'
-  >>> print sqlparse.format(sql, reindent=True, keyword_case='upper')
+  >>> print bplsqlparse.format(sql, reindent=True, keyword_case='upper')
   SELECT *
   FROM foo
   WHERE id IN
@@ -67,18 +67,18 @@ of SQL and then it tries to analyze as much as possible without making
 too much assumptions about the concrete dialect or the actual statement.
 At least it's up to the user of this API to interpret the results right.
 
-When using the :meth:`~sqlparse.parse` function a tuple of
-:class:`~sqlparse.sql.Statement` instances is returned:
+When using the :meth:`~bplsqlparse.parse` function a tuple of
+:class:`~bplsqlparse.sql.Statement` instances is returned:
 
 .. code-block:: python
 
   >>> sql = 'select * from "someschema"."mytable" where id = 1'
-  >>> parsed = sqlparse.parse(sql)
+  >>> parsed = bplsqlparse.parse(sql)
   >>> parsed
   (<Statement 'select...' at 0x9ad08ec>,)
 
 Each item of the tuple is a single statement as identified by the above
-mentioned :meth:`~sqlparse.split` function. So let's grab the only element
+mentioned :meth:`~bplsqlparse.split` function. So let's grab the only element
 from that list and have a look at the ``tokens`` attribute.
 Sub-tokens are stored in this attribute.
 
@@ -115,14 +115,14 @@ To check out the latest sources of this module run
 
 .. code-block:: bash
 
-   $ git clone git://github.com/andialbrecht/sqlparse.git
+   $ git clone git://github.com/andialbrecht/bplsqlparse.git
 
 
 to check out the latest sources from the repository.
 
-:mod:`sqlparse` is currently tested under Python 2.5, 2.6, 2.7, 3.2 and
+:mod:`bplsqlparse` is currently tested under Python 2.5, 2.6, 2.7, 3.2 and
 pypy. Tests are automatically run on each commit and for each pull
-request on Travis: https://travis-ci.org/andialbrecht/sqlparse
+request on Travis: https://travis-ci.org/andialbrecht/bplsqlparse
 
 Make sure to run the test suite before sending a pull request by running
 
@@ -135,7 +135,7 @@ above. Ideally a Python 2 and a Python 3 version should be tested
 locally.
 
 Please file bug reports and feature requests on the project site at
-https://github.com/andialbrecht/sqlparse/issues/new or if you have
+https://github.com/andialbrecht/bplsqlparse/issues/new or if you have
 code to contribute upload it to http://codereview.appspot.com and
 add albrecht.andi@googlemail.com as reviewer.
 

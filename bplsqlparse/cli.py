@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 """Module that contains the command line app.
@@ -11,11 +11,11 @@
 Why does this file exist, and why not put this in __main__?
   You might be tempted to import things from __main__ later, but that will
   cause problems: the code will get executed twice:
-  - When you run `python -m sqlparse` python will execute
+  - When you run `python -m bplsqlparse` python will execute
     ``__main__.py`` as a script. That means there won't be any
-    ``sqlparse.__main__`` in ``sys.modules``.
+    ``bplsqlparse.__main__`` in ``sys.modules``.
   - When you import __main__ it will get executed again (as a module) because
-    there's no ``sqlparse.__main__`` in ``sys.modules``.
+    there's no ``bplsqlparse.__main__`` in ``sys.modules``.
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 
@@ -24,9 +24,9 @@ import sys
 from io import TextIOWrapper
 from codecs import open, getreader
 
-import sqlparse
-from sqlparse.compat import PY2
-from sqlparse.exceptions import SQLParseError
+import bplsqlparse
+from bplsqlparse.compat import PY2
+from bplsqlparse.exceptions import PLSQLParseError
 
 
 # TODO: Add CLI Tests
@@ -52,7 +52,7 @@ def create_parser():
     parser.add_argument(
         '--version',
         action='version',
-        version=sqlparse.__version__)
+        version=bplsqlparse.__version__)
 
     group = parser.add_argument_group('Formatting Options')
 
@@ -169,11 +169,11 @@ def main(args=None):
 
     formatter_opts = vars(args)
     try:
-        formatter_opts = sqlparse.formatter.validate_options(formatter_opts)
-    except SQLParseError as e:
+        formatter_opts = bplsqlparse.formatter.validate_options(formatter_opts)
+    except PLSQLParseError as e:
         return _error(u'Invalid options: {0}'.format(e))
 
-    s = sqlparse.format(data, **formatter_opts)
+    s = bplsqlparse.format(data, **formatter_opts)
     stream.write(s)
     stream.flush()
     return 0

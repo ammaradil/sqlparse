@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This setup script is part of python-sqlparse and is released under
+# This setup script is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 import re
@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 def get_version():
     """Parse __init__.py for version number instead of importing the file."""
-    VERSIONFILE = 'sqlparse/__init__.py'
+    VERSIONFILE = 'bplsqlparse/__init__.py'
     VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
     with open(VERSIONFILE) as f:
         verstrline = f.read()
@@ -24,10 +24,10 @@ def get_version():
 
 
 LONG_DESCRIPTION = """
-``sqlparse`` is a non-validating SQL parser module.
+``bplsqlparse`` is a non-validating SQL parser module.
 It provides support for parsing, splitting and formatting SQL statements.
 
-Visit the `project page <https://github.com/andialbrecht/sqlparse>`_ for
+Visit the `project page <https://github.com/andialbrecht/bplsqlparse>`_ for
 additional information and documentation.
 
 **Example Usage**
@@ -35,15 +35,15 @@ additional information and documentation.
 
 Splitting SQL statements::
 
-   >>> import sqlparse
-   >>> sqlparse.split('select * from foo; select * from bar;')
+   >>> import bplsqlparse
+   >>> bplsqlparse.split('select * from foo; select * from bar;')
    [u'select * from foo; ', u'select * from bar;']
 
 
 Formatting statemtents::
 
    >>> sql = 'select * from foo where id in (select id from bar);'
-   >>> print sqlparse.format(sql, reindent=True, keyword_case='upper')
+   >>> print bplsqlparse.format(sql, reindent=True, keyword_case='upper')
    SELECT *
    FROM foo
    WHERE id IN
@@ -54,7 +54,7 @@ Formatting statemtents::
 Parsing::
 
    >>> sql = 'select * from someschema.mytable where id = 1'
-   >>> res = sqlparse.parse(sql)
+   >>> res = bplsqlparse.parse(sql)
    >>> res
    (<Statement 'select...' at 0x9ad08ec>,)
    >>> stmt = res[0]
@@ -75,11 +75,11 @@ Parsing::
 """
 
 setup(
-    name='sqlparse',
+    name='bplsqlparse',
     version=get_version(),
     author='Andi Albrecht',
     author_email='albrecht.andi@gmail.com',
-    url='https://github.com/andialbrecht/sqlparse',
+    url='https://github.com/andialbrecht/bplsqlparse',
     description='Non-validating SQL parser',
     long_description=LONG_DESCRIPTION,
     license='BSD',
@@ -102,7 +102,7 @@ setup(
     packages=find_packages(exclude=('tests',)),
     entry_points={
         'console_scripts': [
-            'sqlformat = sqlparse.__main__:main',
+            'sqlformat = bplsqlparse.__main__:main',
         ]
     },
 )

@@ -2,11 +2,11 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
-from sqlparse import sql, tokens as T
-from sqlparse.utils import split_unquoted_newlines
+from bplsqlparse import sql, tokens as T
+from bplsqlparse.utils import split_unquoted_newlines
 
 
 class StripCommentsFilter(object):

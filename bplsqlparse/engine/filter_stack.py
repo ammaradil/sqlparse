@@ -2,14 +2,14 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 """filter"""
 
-from sqlparse import lexer
-from sqlparse.engine import grouping, grouping_class
-from sqlparse.engine.statement_splitter import StatementSplitter
+from bplsqlparse import lexer
+from bplsqlparse.engine import grouping, grouping_class
+from bplsqlparse.engine.statement_splitter import StatementSplitter
 
 
 class FilterStack(object):

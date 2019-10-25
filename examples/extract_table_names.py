@@ -3,18 +3,18 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This example is part of python-sqlparse and is released under
+# This example is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 #
 # This example illustrates how to extract table names from nested
 # SELECT statements.
 #
 # See:
-# http://groups.google.com/group/sqlparse/browse_thread/thread/b0bd9a022e9d4895
+# http://groups.google.com/group/bplsqlparse/browse_thread/thread/b0bd9a022e9d4895
 
-import sqlparse
-from sqlparse.sql import IdentifierList, Identifier
-from sqlparse.tokens import Keyword, DML
+import bplsqlparse
+from bplsqlparse.sql import IdentifierList, Identifier
+from bplsqlparse.tokens import Keyword, DML
 
 
 def is_subselect(parsed):
@@ -55,7 +55,7 @@ def extract_table_identifiers(token_stream):
 
 
 def extract_tables(sql):
-    stream = extract_from_part(sqlparse.parse(sql)[0])
+    stream = extract_from_part(bplsqlparse.parse(sql)[0])
     return list(extract_table_identifiers(stream))
 
 

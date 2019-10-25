@@ -11,5 +11,5 @@ User Interfaces
   application that exposes the formatting features using a web front-end.
   See http://sqlformat.appspot.com for details.
   The source for this application is available from a source code check out
-  of the :mod:`sqlparse` module (see :file:`extras/appengine`).
+  of the :mod:`bplsqlparse` module (see :file:`extras/appengine`).
 

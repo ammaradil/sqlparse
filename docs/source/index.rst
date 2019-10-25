@@ -1,19 +1,19 @@
-.. python-sqlparse documentation master file, created by
+.. python-bplsqlparse documentation master file, created by
    sphinx-quickstart on Thu Feb 26 08:19:28 2009.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-python-sqlparse
+python-bplsqlparse
 ===============
 
-:mod:`sqlparse` is a non-validating SQL parser for Python.
+:mod:`bplsqlparse` is a non-validating SQL parser for Python.
 It provides support for parsing, splitting and formatting SQL statements.
 
 The module is compatible with Python 2.7 and Python 3 (>= 3.3)
 and released under the terms of the `New BSD license
 <https://opensource.org/licenses/BSD-3-Clause>`_.
 
-Visit the project page at https://github.com/andialbrecht/sqlparse for
+Visit the project page at https://github.com/andialbrecht/bplsqlparse for
 further information about this project.
 
 
@@ -22,13 +22,13 @@ tl;dr
 
 .. code-block:: bash
 
-   $ pip install sqlparse
+   $ pip install bplsqlparse
    $ python
-   >>> import sqlparse
-   >>> print(sqlparse.format('select * from foo', reindent=True))
+   >>> import bplsqlparse
+   >>> print(bplsqlparse.format('select * from foo', reindent=True))
    select *
    from foo
-   >>> parsed = sqlparse.parse('select * from foo')[0]
+   >>> parsed = bplsqlparse.parse('select * from foo')[0]
    >>> parsed.tokens
    [<DML 'select' at 0x7f22c5e15368>, <Whitespace ' ' at 0x7f22c5e153b0>, <Wildcard '*' … ]
    >>>
@@ -52,10 +52,10 @@ Resources
 ---------
 
 Project page
-   https://github.com/andialbrecht/sqlparse
+   https://github.com/andialbrecht/bplsqlparse
 
 Bug tracker
-   https://github.com/andialbrecht/sqlparse/issues
+   https://github.com/andialbrecht/bplsqlparse/issues
 
 Documentation
-   https://sqlparse.readthedocs.io/
+   https://bplsqlparse.readthedocs.io/

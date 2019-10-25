@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2016 Andi Albrecht, albrecht.andi@gmail.com
 #
-# This module is part of python-sqlparse and is released under
+# This module is part of python-bplsqlparse and is released under
 # the BSD License: https://opensource.org/licenses/BSD-3-Clause
 
 """SQL Lexer"""
@@ -12,10 +12,10 @@
 # It's separated from the rest of pygments to increase performance
 # and to allow some customizations.
 
-from sqlparse import tokens
-from sqlparse.keywords import SQL_REGEX
-from sqlparse.compat import bytes_type, text_type, file_types
-from sqlparse.utils import consume
+from bplsqlparse import tokens
+from bplsqlparse.keywords import SQL_REGEX
+from bplsqlparse.compat import bytes_type, text_type, file_types
+from bplsqlparse.utils import consume
 
 
 class Lexer(object):
