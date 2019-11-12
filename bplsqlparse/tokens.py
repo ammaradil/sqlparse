@@ -77,3 +77,4 @@ SqlError = Token.SqlError
 Drop = Token.Drop
 Create = Token.Create
 Start = Token.Start
+Set = Token.Set
