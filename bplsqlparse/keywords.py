@@ -27,7 +27,7 @@ SQL_REGEX = {
         (r'CREATE\s+PUBLIC\s+SYNONYM\s+[A-Z0-9]+\s+FOR\s+([A-Z0-9]+\.)?[A-Z0-9]+\s*;?', tokens.Create.Synonym),
         (r'START\s+(GURGRTB|GURGRTH)\s+[A-Z0-9]+\s*;?', tokens.Start.Synonym),
 
-        (r'SET\s+((DEF(INE)?)|(SCAN))\s+(ON|OFF)(\s*;)?', tokens.Comment.Set),
+        (r'SET\s+((DEF(INE)?)|(SCAN))\s+(ON|OFF)(\s*;)?', tokens.Set),
 
         ###################################
 
